@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "4.5.0",
+    "ethers": "^5.7.2",
     "axios": "0.26.0",
     "buffer": "^6.0.3",
     "ipfs-http-client": "56.0.1",
@@ -33,7 +34,6 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "ethereum-waffle": "^3.4.4",
-    "ethers": "^5.7.2",
     "hardhat": "^2.12.4",
     "postcss": "8.4.7",
     "tailwindcss": "3.0.23"

@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: [dedicatedEndPoint, 'sahilpanhotra.infura-ipfs.io'],
+    domains: [dedicatedEndPoint, 'cryptoketnft.infura-ipfs.io'],
   },
   env: {
     BASE_URL: process.env.BASE_URL,

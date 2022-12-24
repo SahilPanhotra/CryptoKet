@@ -4,11 +4,11 @@ import { ethers } from 'ethers';
 
 import axios from 'axios';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
-import { Buffer } from 'buffer';
 
 import { MarketAddress, MarketAddressABI } from './constants';
 
 export const NFTContext = React.createContext();
+const fetchContract = (signerORProvider) => new ethers.Contract(MarketAddress, MarketAddressABI, signerORProvider);
 
 export const NFTProvider = ({ children }) => {
   const auth = useRef('');
@@ -59,6 +59,58 @@ export const NFTProvider = ({ children }) => {
     });
     return responseClient;
   };
+
+  const createSale = async (url, forminputPrice, isReselling, id) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const price = ethers.utils.parseUnits(forminputPrice, 'ether');
+    const contract = fetchContract(signer);
+    const listingPrice = await contract.getListingPrice();
+
+    const transaction = await contract.createToken(url, price, { value: listingPrice.toString() });
+    await transaction.wait();
+  };
+  const fetchNFTs = async () => {
+    const provider = new ethers.providers.JsonRpcProvider();
+    const contract = fetchContract(provider);
+    const data = await contract.fetchMarketItems();
+    const items = await Promise.all(data.map(async ({ tokenId, seller, owner, price: unformmattedPrice }) => {
+      const tokenURI = await contract.tokenURI(tokenId);
+      const { data: { image, name, description } } = await axios.get(tokenURI);
+      const price = ethers.utils.formatUnits(unformmattedPrice.toString(), 'ether');
+
+      return {
+        price,
+        tokenId: tokenId.toNumber(),
+        seller,
+        owner,
+        image,
+        name,
+        description,
+        tokenURI,
+      };
+    }));
+
+    return items;
+  };
+
+  const CreateNFT = async (formInput, fileUrl, router) => {
+    const { name, description, price } = formInput;
+    if (!name || !description || !price || !fileUrl) return;
+    const data = JSON.stringify({ name, description, image: fileUrl });
+    try {
+      const added = await client.current.add(data);
+      const subdomain = 'https://cryptoketnft.infura-ipfs.io';
+      const URL = `${subdomain}/ipfs/${added.path}`;
+      await createSale(URL, price);
+      router.push('/');
+    } catch (error) {
+      console.log('Error uploading file to IPFS');
+    }
+  };
+
   useEffect(async () => {
     checkIfWalletIsConnected();
     const { data } = await fetchAuth();
@@ -67,7 +119,7 @@ export const NFTProvider = ({ children }) => {
   }, []);
 
   return (
-    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS }}>
+    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS, CreateNFT, fetchNFTs }}>
       {children}
     </NFTContext.Provider>
   );

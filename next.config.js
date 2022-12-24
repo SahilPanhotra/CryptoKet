@@ -1,7 +1,12 @@
-/** @type {import('next').NextConfig} */
+const dedicatedEndPoint = 'https://cryptoketnft.infura-ipfs.io';
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
-
-module.exports = nextConfig
+  images: {
+    domains: [dedicatedEndPoint, 'sahilpanhotra.infura-ipfs.io'],
+  },
+  env: {
+    BASE_URL: process.env.BASE_URL,
+  },
+};
+module.exports = nextConfig;

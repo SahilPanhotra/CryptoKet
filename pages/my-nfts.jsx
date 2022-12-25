@@ -18,6 +18,14 @@ const MyNFTs = () => {
       </div>
     );
   }
+
+  useEffect(() => {
+    fetchMyNFTsOrListedNFTs().then((items) => {
+      setNfts(items);
+      console.log(items);
+      setIsLoading(false);
+    });
+  }, []);
   return (
     <div className="w-full flex justify-start items-center flex-col min-h-screen">
       <div className="w-full flexCenter flex-col">

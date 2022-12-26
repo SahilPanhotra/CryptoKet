@@ -69,7 +69,8 @@ export const NFTProvider = ({ children }) => {
     const contract = fetchContract(signer);
     const listingPrice = await contract.getListingPrice();
 
-    const transaction = await contract.createToken(url, price, { value: listingPrice.toString() });
+    const transaction = !isReselling ? await contract.createToken(url, price, { value: listingPrice.toString() })
+      : await contract.resellToken(id, price, { value: listingPrice.toString() });
     await transaction.wait();
   };
   const fetchNFTs = async () => {
@@ -165,7 +166,7 @@ export const NFTProvider = ({ children }) => {
   }, []);
 
   return (
-    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS, CreateNFT, fetchNFTs, fetchMyNFTsOrListedNFTs, buyNft }}>
+    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS, CreateNFT, fetchNFTs, fetchMyNFTsOrListedNFTs, buyNft, createSale }}>
       {children}
     </NFTContext.Provider>
   );

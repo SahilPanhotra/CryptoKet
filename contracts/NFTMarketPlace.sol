@@ -14,6 +14,8 @@ contract NFTMarketplace is ERC721URIStorage {
     Counters.Counter private _itemsSold;
 
     uint256 listingPrice = 0.025 ether;
+    uint256 ownerCommissionPercentage = 15;
+    uint256 creatorCommissionPercentage = 1000 - ownerCommissionPercentage;
 
     address payable owner; 
 
@@ -35,8 +37,26 @@ contract NFTMarketplace is ERC721URIStorage {
       bool sold
     );
 
-    constructor() ERC721("Metaverse Tokens", "METT") {
+    constructor() ERC721("CryptoKet", "CRYPT") {
       owner = payable(msg.sender);
+    }
+
+    function getOwnerShare(uint256 x) private view returns(uint256) {
+        return (x / 1000) * ownerCommissionPercentage;
+    }
+
+     function getCreatorShare(uint256 x) private view returns(uint256) {
+        return (x / 1000) * creatorCommissionPercentage;
+    }
+
+    function updateOwnerCommissionPercentage(uint _ownerCommissionPercentage) public payable {
+        require(owner == msg.sender, "Only marketplace owner can update the listing price");
+
+        ownerCommissionPercentage = _ownerCommissionPercentage;
+    }
+
+     function getOwnerCommissionPercentage() public view returns (uint256) {
+        return ownerCommissionPercentage;
     }
 
     /* Updates the listing price of the contract */
@@ -99,6 +119,7 @@ contract NFTMarketplace is ERC721URIStorage {
     /* Transfers ownership of the item, as well as funds between parties */
     function createMarketSale(uint256 tokenId) public payable {
       uint price = idToMarketItem[tokenId].price;
+      address payable creator = idToMarketItem[tokenId].seller;
       require(msg.value == price, "Please submit the asking price in order to complete the purchase");
       idToMarketItem[tokenId].owner = payable(msg.sender);
       idToMarketItem[tokenId].sold = true;
@@ -106,8 +127,8 @@ contract NFTMarketplace is ERC721URIStorage {
       _itemsSold.increment();
       
       _transfer(address(this), msg.sender, tokenId);
-      payable(owner).transfer(listingPrice);
-      payable(idToMarketItem[tokenId].seller).transfer(msg.value);
+      payable(owner).transfer(getOwnerShare(msg.value));
+        payable(creator).transfer(getCreatorShare(msg.value));
     }
 
     /* Returns all unsold market items */

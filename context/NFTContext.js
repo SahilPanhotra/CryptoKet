@@ -15,7 +15,7 @@ export const NFTProvider = ({ children }) => {
   const client = useRef({});
   const [currentAccount, setCurrentAccount] = useState('');
   const [isLoadingNFT, setIsLoadingNFT] = useState(false);
-  const nftCurrency = 'ETH';
+  const nftCurrency = 'MATIC';
 
   const checkIfWalletIsConnected = async () => {
     if (!window.ethereum) return alert('Please install Metamask wallet');

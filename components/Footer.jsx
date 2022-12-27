@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
 import images from '../assets';
-import { Button } from '.';
+import Button from './Button';
 
 const FooterLinks = ({ heading, items }) => (
   <div className="flex-1 justify-start items-start "><h3 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl mb-10">{heading}</h3>

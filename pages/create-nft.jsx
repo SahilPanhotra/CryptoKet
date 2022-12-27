@@ -9,7 +9,7 @@ import { NFTContext } from '../context/NFTContext';
 import { Button, Input, Loader } from '../components';
 import images from '../assets';
 
-const CreateNFT = () => {
+const CreateNFTPage = () => {
   const [fileUrl, setFileUrl] = useState(null);
 
   const [formInput, setFormInput] = useState({ price: '', name: '', description: '' });
@@ -111,4 +111,4 @@ const CreateNFT = () => {
   );
 };
 
-export default CreateNFT;
+export default CreateNFTPage;

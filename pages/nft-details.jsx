@@ -50,7 +50,7 @@ const PaymentBodyCmp = ({ nft, nftCurrency }) => (
 );
 
 const NFTDetails = () => {
-  const { currentAccount, nftCurrency, buyNft } = useContext(NFTContext);
+  const { isLoadingNFT, currentAccount, nftCurrency, buyNft } = useContext(NFTContext);
   const [nft, setNft] = useState({
     image: '',
     tokenId: '',
@@ -139,20 +139,21 @@ const NFTDetails = () => {
             <p className="font-poppins dark:text-white text-nft-black-1 text-base font-normal border border-gray p-2">
               You Cannot Buy Your Own NFT
             </p>
-          ) : currentAccount === nft.owner.toLowerCase()
-            ? (
-              <Button
-                btnName="List on MarketPlace"
-                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => router.push(`/resell-nft?tokenId=${nft.tokenId}&tokenURI=${nft.tokenURI}`)}
-              />
-            ) : (
-              <Button
-                btnName={`Buy for ${nft.price} ${nftCurrency}`}
-                classStyles="mr-5 sm:mr-0 rounded-xl"
-                handleClick={() => setPaymentModal(true)}
-              />
-            )}
+          ) : currentAccount === nft.owner.toLowerCase() ? (
+            <Button
+              btnName="List on MarketPlace"
+              classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+              handleClick={() => router.push(
+                `/resell-nft?tokenId=${nft.tokenId}&tokenURI=${nft.tokenURI}`,
+              )}
+            />
+          ) : (
+            <Button
+              btnName={`Buy for ${nft.price} ${nftCurrency}`}
+              classStyles="mr-5 sm:mr-0 rounded-xl"
+              handleClick={() => setPaymentModal(true)}
+            />
+          )}
         </div>
       </div>
       {paymentModal && (
@@ -171,6 +172,19 @@ const NFTDetails = () => {
                 classStyles="mr-5 sm:mr-0 rounded-xl"
                 handleClick={() => setPaymentModal(false)}
               />
+            </div>
+          )}
+          handleClose={() => setPaymentModal(false)}
+        />
+      )}
+      {isLoadingNFT && (
+        <Modal
+          header="Buying NFT..."
+          body={(
+            <div className="flexCenter flex-col text-center">
+              <div className="relative w-52 h-52">
+                <Loader />
+              </div>
             </div>
           )}
           handleClose={() => setPaymentModal(false)}

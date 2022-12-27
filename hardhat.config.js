@@ -1,13 +1,16 @@
-const fs = require('fs');
 require('@nomiclabs/hardhat-waffle');
+require('dotenv').config({ path: '.env' });
 
-const privateKey = fs.readFileSync('.secret').toString().trim();
+const { ALCHEMY_API_KEY_URL } = process.env;
+
+const { MUMBAI_PRIVATE_KEY } = process.env;
 
 module.exports = {
+  solidity: '0.8.4',
   networks: {
-    hardhat: {
-      chainId: 1337,
+    mumbai: {
+      url: ALCHEMY_API_KEY_URL,
+      accounts: [MUMBAI_PRIVATE_KEY],
     },
   },
-  solidity: '0.8.4',
 };

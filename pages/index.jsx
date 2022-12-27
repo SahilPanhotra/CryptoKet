@@ -91,6 +91,7 @@ const Home = () => {
     };
   });
   const creators = getTopCreators(nftsCopy);
+  console.log(creators);
   return (
     <div className="flex justify-center ms:px-4 p-12">
       <div className="w-full minmd:w-4/5">
@@ -121,7 +122,7 @@ const Home = () => {
                   className="flex flex-row w-max overflow-x-scroll no-scrollbar select-none"
                   ref={scrollRef}
                 >
-                  {creators.map((creator, i) => (
+                  {creators.sort((a, b) => b.sumall - a.sumall).map((creator, i) => (
                     <CreatorCard
                       key={creator.seller}
                       rank={i + 1}
@@ -129,7 +130,7 @@ const Home = () => {
                       creatorName={shortenAddress(creator.seller)}
                       creatorEths={creator.sumall}
                     />
-                  ))}
+                  )).slice(0, 8)}
                   {!hideButtons && (
                     <>
                       <div
